@@ -159,6 +159,26 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
+  // Serve Vite React dashboard static files under production
+  const dashboardPath = path.resolve(process.cwd(), 'dashboard', 'dist');
+  if (fs.existsSync(dashboardPath)) {
+    console.log(`[Bootstrap] 📂 Serving dashboard static assets from: ${dashboardPath}`);
+    const expressApp = app.getHttpAdapter().getInstance();
+    
+    // Serve static files
+    expressApp.use(require('express').static(dashboardPath));
+    
+    // SPA fallback: serve index.html for any non-API routes
+    expressApp.get('*', (req: any, res: any, next: any) => {
+      if (req.path.startsWith('/api')) {
+        return next();
+      }
+      res.sendFile(path.join(dashboardPath, 'index.html'));
+    });
+  } else {
+    console.log('[Bootstrap] ⚠️ Dashboard build not found. Running in API-only mode.');
+  }
+
   const port = process.env.PORT || 2785;
   await app.listen(port);
 

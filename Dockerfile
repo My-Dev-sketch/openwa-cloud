@@ -68,6 +68,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dashboard/dist ./dashboard/dist
 
 # Create data directories with proper permissions
 RUN mkdir -p ./data/sessions ./data/media && \
