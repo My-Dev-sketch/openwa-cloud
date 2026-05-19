@@ -33,7 +33,10 @@
                 "description": "Additional arguments for Puppeteer",
                 "default": [
                     "--no-sandbox",
-                    "--disable-setuid-sandbox"
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--no-zygote"
                 ]
             }
         }

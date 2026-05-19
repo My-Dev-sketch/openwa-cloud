@@ -69,8 +69,8 @@ export class WhatsAppWebJsAdapter extends EventEmitter implements IWhatsAppEngin
     this.setStatus(EngineStatus.INITIALIZING);
 
     try {
-      // Build puppeteer args, including proxy if configured
-      const puppeteerArgs = this.config.puppeteer?.args || [
+      // High-compatibility default flags that should always be present
+      const defaultArgs = [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
@@ -79,6 +79,10 @@ export class WhatsAppWebJsAdapter extends EventEmitter implements IWhatsAppEngin
         '--no-zygote',
         '--disable-gpu',
       ];
+
+      // Merge default args with user-provided config and deduplicate
+      const configArgs = this.config.puppeteer?.args || [];
+      const puppeteerArgs = Array.from(new Set([...defaultArgs, ...configArgs]));
 
       // Add proxy configuration if provided
       if (this.config.proxy) {
