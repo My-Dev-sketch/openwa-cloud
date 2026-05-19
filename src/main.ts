@@ -169,7 +169,7 @@ async function bootstrap() {
     expressApp.use(require('express').static(dashboardPath));
     
     // SPA fallback: serve index.html for any non-API routes
-    expressApp.get('*', (req: any, res: any, next: any) => {
+    expressApp.get(/(.*)/, (req: any, res: any, next: any) => {
       if (req.path.startsWith('/api')) {
         return next();
       }
@@ -180,7 +180,7 @@ async function bootstrap() {
   }
 
   const port = process.env.PORT || 2785;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
   console.log(`🚀 OpenWA is running on: http://localhost:${port}`);
   console.log(`📚 Swagger docs: http://localhost:${port}/api/docs`);
