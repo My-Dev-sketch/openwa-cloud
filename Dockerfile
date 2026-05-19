@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy package files
 COPY package*.json ./
+COPY dashboard/package*.json ./dashboard/
 
 # Install all dependencies (including devDependencies for build)
 RUN npm ci
