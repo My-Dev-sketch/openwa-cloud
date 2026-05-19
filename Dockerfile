@@ -26,6 +26,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Prune devDependencies to keep only production dependencies
+RUN npm prune --omit=dev
+
 # ===== Stage 2: Production =====
 FROM node:22-slim AS production
 
@@ -61,13 +64,9 @@ RUN groupadd -r openwa && useradd -r -g openwa openwa
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install production dependencies only
-RUN npm ci --omit=dev && npm cache clean --force
-
-# Copy built application from builder stage
+# Copy package files and production node_modules from builder stage
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/dashboard/dist ./dashboard/dist
 
